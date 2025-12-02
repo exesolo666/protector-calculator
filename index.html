@@ -306,8 +306,9 @@
           </div>
 
           <div class="form-field">
-            <label class="form-label" for="serviceSelect">Конкретная услуга</label>
-            <select id="serviceSelect"></select>
+            <label class="form-label" for="serviceSelect">Конкретные услуги</label>
+            <!-- множественный выбор -->
+            <select id="serviceSelect" multiple size="6"></select>
           </div>
 
           <div class="form-field" id="diameterField">
@@ -633,19 +634,31 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // Не сбрасываем диаметр при смене услуги, если он есть в новой услуге
   function updateDiameterVisibility() {
     const service = services.find(s => s.id === serviceSelect.value);
     if (!service) return;
+
+    const previous = diameterSelect.value;
+
     if (service.paramType === 'diameter') {
       diameterField.style.display = 'flex';
       diameterSelect.innerHTML = '';
-      Object.keys(service.diameters).forEach(d => {
+
+      const keys = Object.keys(service.diameters);
+
+      keys.forEach(d => {
         const opt = document.createElement('option');
         opt.value = d;
         opt.textContent = d;
         diameterSelect.appendChild(opt);
       });
-      diameterSelect.value = Object.keys(service.diameters)[0];
+
+      if (previous && service.diameters[previous] !== undefined) {
+        diameterSelect.value = previous;
+      } else {
+        diameterSelect.value = keys[0];
+      }
     } else {
       diameterField.style.display = 'none';
       diameterSelect.innerHTML = '';
@@ -658,17 +671,20 @@ document.addEventListener('DOMContentLoaded', function () {
     if (groupId !== 'tyres-light') lowProfileCheckbox.checked = false;
   }
 
+  // Заполняем услуги, выделяем первую по умолчанию
   function populateServices() {
     const groupId = groupSelect.value;
     const filtered = services.filter(s => s.group === groupId);
     serviceSelect.innerHTML = '';
-    filtered.forEach(s => {
+
+    filtered.forEach((s, index) => {
       const opt = document.createElement('option');
       opt.value = s.id;
       opt.textContent = s.name;
+      if (index === 0) opt.selected = true;
       serviceSelect.appendChild(opt);
     });
-    if (filtered.length) serviceSelect.value = filtered[0].id;
+
     updateDiameterVisibility();
     updateLowProfileVisibility();
   }
@@ -722,58 +738,76 @@ document.addEventListener('DOMContentLoaded', function () {
     updatePositionsTag();
   }
 
+  // Добавляем сразу все выбранные услуги
   function addItem() {
     setError(null);
     const groupId = groupSelect.value;
-    const service = services.find(s => s.id === serviceSelect.value);
-    if (!service) {
-      setError('Выберите услугу.');
+
+    const selectedServiceIds = Array.from(serviceSelect.selectedOptions || [])
+      .map(opt => opt.value);
+
+    if (!selectedServiceIds.length) {
+      setError('Выберите хотя бы одну услугу.');
       return;
     }
+
+    const selectedServices = selectedServiceIds
+      .map(id => services.find(s => s.id === id))
+      .filter(Boolean);
+
+    if (!selectedServices.length) {
+      setError('Не удалось найти выбранные услуги.');
+      return;
+    }
+
     const quantity = Number(quantityInput.value || '0');
     if (!Number.isFinite(quantity) || quantity <= 0) {
       setError('Количество должно быть больше 0.');
       return;
     }
 
-    let paramValue = null;
-    let unitPrice = null;
+    const toAdd = [];
+    let diameterForLowProfile = null;
 
-    if (service.paramType === 'diameter') {
-      paramValue = diameterSelect.value;
-      unitPrice = service.diameters[paramValue];
-      if (unitPrice == null) {
-        setError('Для этого диаметра цена не указана.');
+    for (const service of selectedServices) {
+      let paramValue = null;
+      let unitPrice = null;
+
+      if (service.paramType === 'diameter') {
+        paramValue = diameterSelect.value;
+        unitPrice = service.diameters[paramValue];
+        if (unitPrice == null) {
+          setError('Для выбранного диаметра цена не указана для услуги: ' + service.name);
+          return;
+        }
+        diameterForLowProfile = paramValue;
+      } else {
+        unitPrice = service.price;
+      }
+
+      if (!Number.isFinite(unitPrice)) {
+        setError('Не удалось определить цену для услуги: ' + service.name);
         return;
       }
-    } else {
-      unitPrice = service.price;
+
+      toAdd.push({
+        name: service.name,
+        param: paramValue,
+        quantity,
+        unitPrice,
+        sum: unitPrice * quantity,
+        from: !!service.from
+      });
     }
 
-    if (!Number.isFinite(unitPrice)) {
-      setError('Не удалось определить цену.');
-      return;
-    }
-
-    const toAdd = [];
-
-    toAdd.push({
-      name: service.name,
-      param: paramValue,
-      quantity,
-      unitPrice,
-      sum: unitPrice * quantity,
-      from: !!service.from
-    });
-
-    if (groupId === 'tyres-light' && lowProfileCheckbox.checked) {
+    if (groupId === 'tyres-light' && lowProfileCheckbox.checked && diameterForLowProfile) {
       const lowService = services.find(s => s.id === 'tyres-light-low');
       if (lowService) {
-        const lowPrice = lowService.diameters[paramValue] || 0;
+        const lowPrice = lowService.diameters[diameterForLowProfile] || 0;
         if (lowPrice > 0) {
           toAdd.push({
             name: lowService.name,
-            param: paramValue,
+            param: diameterForLowProfile,
             quantity,
             unitPrice: lowPrice,
             sum: lowPrice * quantity,

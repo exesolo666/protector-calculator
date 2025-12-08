@@ -9,7 +9,7 @@
     :root {
       --bg: #000;
       --card-bg: #0c0c0c;
-      --card-alt: #141414;
+      --card-alt: #151515;
       --accent: #ff5a00;
       --accent-soft: #ff7a2a;
       --border: #262626;
@@ -36,7 +36,7 @@
 
     #app {
       width: 100%;
-      max-width: 980px;
+      max-width: 1080px;
     }
 
     h1, h2, h3 {
@@ -62,7 +62,7 @@
       gap: 14px;
     }
 
-    @media (min-width: 850px) {
+    @media (min-width: 900px) {
       .grid {
         grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
         align-items: flex-start;
@@ -73,12 +73,8 @@
       background: var(--card-bg);
       border-radius: var(--radius-xl);
       padding: 14px 14px 16px;
-      border: 1px solid rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
       box-shadow: var(--shadow-soft);
-    }
-
-    .card + .card {
-      margin-top: 10px;
     }
 
     .card-header {
@@ -98,7 +94,7 @@
       font-size: 10px;
       padding: 2px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.16);
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.11em;
@@ -114,6 +110,12 @@
       display: grid;
       grid-template-columns: 1fr;
       gap: 8px 10px;
+    }
+
+    @media (min-width: 640px) {
+      .form-grid--two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     .field {
@@ -201,6 +203,16 @@
     .btn-primary span.icon,
     .btn-secondary span.icon {
       font-size: 16px;
+    }
+
+    .pill {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--muted);
     }
 
     .error {
@@ -309,97 +321,133 @@
       justify-content: space-between;
     }
 
-    .pill {
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      padding: 2px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.15);
+    .page-footer {
+      margin-top: 16px;
+      padding-top: 10px;
+      border-top: 1px solid #181818;
+      font-size: 11px;
       color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      justify-content: space-between;
     }
   </style>
 </head>
 <body>
 <div id="app">
   <div class="page-title">Калькулятор стоимости работ Protector</div>
-  <div class="page-subtitle">Расчёт по официальным прайс-листам студии покраски дисков и бережного шиномонтажа.</div>
+  <div class="page-subtitle">Расчёт по официальным прайс-листам студии покраски и реставрации дисков и бережного шиномонтажа.</div>
 
   <div class="grid">
-    <!-- ЛЕВАЯ КОЛОНКА: работы с дисками -->
+    <!-- Блок 1: Студия покраски и реставрации дисков -->
     <div>
       <div class="card">
         <div class="card-header">
-          <div class="card-title">Работы с дисками и шинами</div>
-          <div class="card-tag">диски · ремонт · правка</div>
+          <div class="card-title">Студия покраски и реставрации дисков</div>
+          <div class="card-tag">диски · порошковая покраска</div>
         </div>
         <div class="card-subtext">
-          Выберите направление, услугу и параметры. Цены с пометкой «от» являются предварительными и уточняются после осмотра.
+          Комплект — это 4 диска. Цены с пометкой «от» являются предварительными и уточняются мастером после осмотра.
         </div>
 
-        <div class="form-grid">
+        <div class="form-grid form-grid--two">
           <div class="field">
             <div class="field-label">Направление</div>
-            <select id="discGroupSelect"></select>
+            <select id="paintDirection"></select>
           </div>
 
           <div class="field">
-            <div class="field-label">Услуга</div>
-            <select id="discServiceSelect"></select>
+            <div class="field-label">Конкретная услуга</div>
+            <select id="paintService"></select>
           </div>
 
-          <div class="field" id="discDiameterField">
+          <div class="field" id="paintDiameterField">
             <div class="field-label">Диаметр / тип</div>
-            <select id="discDiameterSelect"></select>
+            <select id="paintDiameter"></select>
           </div>
 
           <div class="field">
             <div class="field-label">Количество (комплектов / изделий)</div>
-            <input type="number" id="discQuantityInput" min="1" value="1">
+            <input type="number" id="paintQty" min="1" value="1">
           </div>
         </div>
 
-        <div id="discError" class="error"></div>
+        <div id="paintError" class="error"></div>
 
         <div class="actions-row">
-          <button class="btn-primary" id="discAddBtn">
+          <button class="btn-primary" id="paintAddBtn">
             <span class="icon">＋</span>В смету
           </button>
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" style="margin-top:10px;">
         <div class="card-header">
           <div class="card-title">Бережный шиномонтаж</div>
-          <div class="card-tag">шины · комплекс работ</div>
+          <div class="card-tag">комплекс · ремонт шин</div>
         </div>
         <div class="card-subtext">
-          В расчёт входит полный цикл: снятие и установка колеса, демонтаж и монтаж шины, балансировка. Доплата за низкий профиль учитывается по прайсу.
+          Комплексный шиномонтаж считает полный цикл: снятие/установка, демонтаж/монтаж шины и балансировка. Доплаты за низкий профиль и доп. услуги берутся из прайса.
         </div>
 
-        <div class="form-grid">
-          <div class="field">
-            <div class="field-label">Тип автомобиля</div>
-            <select id="tyreTypeSelect">
-              <option value="light">Легковые автомобили</option>
-              <option value="suv">Внедорожники, минивены, кроссоверы, джипы, газели</option>
-            </select>
+        <div class="field">
+          <div class="field-label">Направление</div>
+          <select id="tyreDirection">
+            <option value="complex">Комплексный шиномонтаж (полный цикл)</option>
+            <option value="repair">Ремонт покрышек</option>
+            <option value="straight">Правка литых дисков</option>
+            <option value="rolling">Раскатка штампованных дисков</option>
+            <option value="misc">Прочие услуги шиномонтажа</option>
+          </select>
+        </div>
+
+        <!-- Поля для комплексного шиномонтажа -->
+        <div id="tyreComplexBlock">
+          <div class="form-grid form-grid--two" style="margin-top:8px;">
+            <div class="field">
+              <div class="field-label">Тип автомобиля</div>
+              <select id="tyreType">
+                <option value="light">Легковые автомобили</option>
+                <option value="suv">Внедорожники · минивены · кроссоверы · джипы · газели</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="field-label">Диаметр / тип</div>
+              <select id="tyreRow"></select>
+            </div>
+
+            <div class="field">
+              <div class="field-label">Количество колёс</div>
+              <input type="number" id="tyreQtyComplex" min="1" value="4">
+            </div>
           </div>
 
-          <div class="field">
-            <div class="field-label">Диаметр / тип</div>
-            <select id="tyreRowSelect"></select>
-          </div>
-
-          <div class="field">
-            <div class="field-label">Количество колёс</div>
-            <input type="number" id="tyreQuantityInput" min="1" value="4">
+          <div class="checkbox-row" id="tyreLowProfileRow">
+            <input type="checkbox" id="tyreLowProfile">
+            <label for="tyreLowProfile">Профиль шины &lt; 45 (доплата по прайсу)</label>
           </div>
         </div>
 
-        <div class="checkbox-row" id="lowProfileWrapper">
-          <input type="checkbox" id="tyreLowProfile">
-          <label for="tyreLowProfile">Профиль шины &lt; 45 (доплата по прайсу)</label>
+        <!-- Поля для ремонтных/прочих шиномонтажных услуг -->
+        <div id="tyreGenericBlock" style="display:none; margin-top:8px;">
+          <div class="form-grid form-grid--two">
+            <div class="field">
+              <div class="field-label">Услуга</div>
+              <select id="tyreService"></select>
+            </div>
+
+            <div class="field" id="tyreDiameterField">
+              <div class="field-label">Диаметр / тип</div>
+              <select id="tyreDiameter"></select>
+            </div>
+
+            <div class="field">
+              <div class="field-label">Количество</div>
+              <input type="number" id="tyreQtyGeneric" min="1" value="1">
+            </div>
+          </div>
         </div>
 
         <div id="tyreError" class="error"></div>
@@ -408,12 +456,12 @@
           <button class="btn-primary" id="tyreAddBtn">
             <span class="icon">＋</span>В смету
           </button>
-          <div class="pill">расчёт за 1 колесо × количество</div>
+          <div class="pill">возможен выбор нескольких услуг подряд</div>
         </div>
       </div>
     </div>
 
-    <!-- ПРАВАЯ КОЛОНКА: смета -->
+    <!-- Блок 3: Смета -->
     <div>
       <div class="summary-card">
         <div class="card-header">
@@ -433,7 +481,7 @@
           </thead>
           <tbody id="summaryBody">
           <tr class="empty-row" id="summaryEmpty">
-            <td colspan="5">Добавьте услугу слева, чтобы увидеть расчёт.</td>
+            <td colspan="5">Добавьте услугу слева, чтобы увидеть расчёт по прайсу Protector.</td>
           </tr>
           </tbody>
         </table>
@@ -444,8 +492,8 @@
         </div>
 
         <div class="summary-note">
-          <span>Цены с пометкой «от» — предварительные, итог зависит от состояния дисков и сложности работ.</span>
-          <span>Прайс: Protector · Чебоксары.</span>
+          <span>Цены с пометкой «от» являются предварительными и уточняются мастером после осмотра.</span>
+          <span>Protector · студия покраски дисков и бережный шиномонтаж.</span>
         </div>
 
         <div class="actions-row" style="margin-top:10px;">
@@ -456,183 +504,183 @@
       </div>
     </div>
   </div>
+
+  <div class="page-footer">
+    <div>г. Чебоксары, Мясокомбинатский проезд, 14</div>
+    <div>тел. +7 969 759-07-99</div>
+  </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  // ---------- ДАННЫЕ ПО ДИСКАМ И УСЛУГАМ ----------
-  const discGroups = [
-    { id: 'paint',         name: 'Покраска дисков (комплект 4 диска)' },
-    { id: 'sandblast',     name: 'Пескоструйная очистка (комплект)' },
-    { id: 'diamond',       name: 'Алмазная проточка' },
-    { id: 'disc-extras',   name: 'Дополнительные услуги по дискам' },
-    { id: 'tyre-repair',   name: 'Ремонт покрышек' },
-    { id: 'straightening', name: 'Правка литых дисков' },
-    { id: 'steel-rolling', name: 'Раскатка штампованных дисков' },
-    { id: 'tyre-other',    name: 'Прочие шиномонтажные услуги' }
-  ];
-
-  const discServices = [
-    // ПОКРАСКА (комплекты)
-    {
-      id: 'paint-std',
-      group: 'paint',
-      name: 'Покраска — стандартные цвета (комплект)',
-      from: false,
-      paramType: 'diameter',
-      diameters: {
-        'R13': 8000, 'R14': 8000, 'R15': 10500, 'R16': 11500,
-        'R17': 13000, 'R18': 14500, 'R19': 15500, 'R20': 17000,
-        'R21': 18500, 'R22': 19500, 'Мото': 7000
+  // ---------- ДАННЫЕ СТУДИИ ПОКРАСКИ И РЕСТАВРАЦИИ ДИСКОВ ----------
+  const paintData = {
+    sandblast: {
+      name: 'Пескоструйная очистка',
+      mode: 'byDiameter',
+      services: {
+        'Пескоструйная очистка (комплект)': {
+          'R13': 2000, 'R14': 2000, 'R15': 2500, 'R16': 3000,
+          'R17': 3300, 'R18': 3500, 'R19': 4000, 'R20': 4500,
+          'R21': 5000, 'R22': 5500, 'Мото': 1000
+        }
       }
     },
-    {
-      id: 'paint-oem',
-      group: 'paint',
-      name: 'Покраска — оригинальные цвета (комплект)',
-      from: false,
-      paramType: 'diameter',
-      diameters: {
-        'R13': 8500, 'R14': 8500, 'R15': 12000, 'R16': 13500,
-        'R17': 15000, 'R18': 17000, 'R19': 18500, 'R20': 20000,
-        'R21': 22000, 'R22': 24000, 'Мото': 9000
+    paint: {
+      name: 'Покраска дисков',
+      mode: 'byDiameter',
+      services: {
+        'Стандартные цвета (комплект)': {
+          'R13': 8000, 'R14': 8000, 'R15': 10500, 'R16': 11500,
+          'R17': 13000, 'R18': 14500, 'R19': 15500, 'R20': 17000,
+          'R21': 18500, 'R22': 19500, 'Мото': 7000
+        },
+        'Оригинальные цвета (комплект)': {
+          'R13': 8500, 'R14': 8500, 'R15': 12000, 'R16': 13500,
+          'R17': 15000, 'R18': 17000, 'R19': 18500, 'R20': 20000,
+          'R21': 22000, 'R22': 24000, 'Мото': 9000
+        }
       }
     },
-
-    // ПЕСКОСТРУЙ
-    {
-      id: 'sandblast-main',
-      group: 'sandblast',
-      name: 'Пескоструйная очистка (комплект)',
-      from: false,
-      paramType: 'diameter',
-      diameters: {
-        'R13': 2000, 'R14': 2000, 'R15': 2500, 'R16': 3000,
-        'R17': 3300, 'R18': 3500, 'R19': 4000, 'R20': 4500,
-        'R21': 5000, 'R22': 5500, 'Мото': 1000
+    diamond: {
+      name: 'Алмазная проточка',
+      mode: 'byDiameter',
+      services: {
+        'Одноширокие диски (комплект)': {
+          'R13': 3000, 'R14': 3000, 'R15': 4000, 'R16': 5000,
+          'R17': 5500, 'R18': 6000, 'R19': 7000, 'R20': 8000,
+          'R21': 9000, 'R22': 10000
+        },
+        'Разноширокие диски (комплект)': {
+          'R13': 3600, 'R14': 3600, 'R15': 4800, 'R16': 6000,
+          'R17': 6500, 'R18': 7200, 'R19': 8400, 'R20': 9600,
+          'R21': 10800, 'R22': 12000
+        }
       }
     },
-
-    // АЛМАЗНАЯ ПРОТОЧКА
-    {
-      id: 'diamond-single',
-      group: 'diamond',
-      name: 'Алмазная проточка — одноширокие диски (комплект)',
-      from: false,
-      paramType: 'diameter',
-      diameters: {
-        'R13': 3000, 'R14': 3000, 'R15': 4000, 'R16': 5000,
-        'R17': 5500, 'R18': 6000, 'R19': 7000, 'R20': 8000,
-        'R21': 9000, 'R22': 10000
+    extras: {
+      name: 'Дополнительные услуги студии',
+      mode: 'simple',
+      services: {
+        'Ремонт сколов и задиров':      { price: 500,  from: true  },
+        'Сварочные работы (аргон)':     { price: 700,  from: false },
+        'Комплексный шиномонтаж':       { price: 1000, from: true  },
+        'Правка геометрии дисков':      { price: 500,  from: true  },
+        'Полировка дисков':             { price: 1500, from: true  },
+        'Вывешивание автомобиля':       { price: 500,  from: true  }
       }
-    },
-    {
-      id: 'diamond-staggered',
-      group: 'diamond',
-      name: 'Алмазная проточка — разноширокие диски (комплект)',
-      from: false,
-      paramType: 'diameter',
-      diameters: {
-        'R13': 3600, 'R14': 3600, 'R15': 4800, 'R16': 6000,
-        'R17': 6500, 'R18': 7200, 'R19': 8400, 'R20': 9600,
-        'R21': 10800, 'R22': 12000
-      }
-    },
-
-    // ДОП. УСЛУГИ ПО ДИСКАМ (из первого прайса)
-    { id: 'chips',    group: 'disc-extras', name: 'Ремонт сколов и задиров',          from: true,  paramType: 'none', price: 500 },
-    { id: 'argon',    group: 'disc-extras', name: 'Сварочные работы (аргон)',         from: false, paramType: 'none', price: 700 },
-    { id: 'complex',  group: 'disc-extras', name: 'Комплексный шиномонтаж',           from: true,  paramType: 'none', price: 1000 },
-    { id: 'geometry', group: 'disc-extras', name: 'Правка геометрии дисков',          from: true,  paramType: 'none', price: 500 },
-    { id: 'polish',   group: 'disc-extras', name: 'Полировка дисков',                 from: true,  paramType: 'none', price: 1500 },
-    { id: 'hanging',  group: 'disc-extras', name: 'Вывешивание автомобиля',           from: true,  paramType: 'none', price: 500 },
-
-    // РЕМОНТ ПОКРЫШЕК (второй прайс)
-    { id: 'repair-harness',  group: 'tyre-repair', name: 'Установка жгута',                 from: false, paramType: 'none', price: 300 },
-    { id: 'repair-plug',     group: 'tyre-repair', name: 'Установка заплатки / грибка',     from: true,  paramType: 'none', price: 450 },
-    { id: 'repair-cord',     group: 'tyre-repair', name: 'Установка кордовой заплатки',     from: true,  paramType: 'none', price: 600 },
-    { id: 'repair-side',     group: 'tyre-repair', name: 'Ремонт боковых порезов',          from: true,  paramType: 'none', price: 800 },
-    { id: 'repair-tube',     group: 'tyre-repair', name: 'Ремонт камеры',                   from: false, paramType: 'none', price: 300 },
-    { id: 'repair-clean',    group: 'tyre-repair', name: 'Зачистка диска',                  from: false, paramType: 'none', price: 50  },
-    { id: 'repair-seal',     group: 'tyre-repair', name: 'Промазать диск герметиком',       from: false, paramType: 'none', price: 100 },
-    { id: 'repair-bag',      group: 'tyre-repair', name: 'Пакет',                           from: false, paramType: 'none', price: 25  },
-    { id: 'repair-valve',    group: 'tyre-repair', name: 'Вентиль простой',                 from: false, paramType: 'none', price: 75  },
-    { id: 'repair-valve2',   group: 'tyre-repair', name: 'Вентиль крем',                    from: false, paramType: 'none', price: 75  },
-
-    // ПРАВКА ЛИТЫХ ДИСКОВ
-    {
-      id: 'straightening-main',
-      group: 'straightening',
-      name: 'Правка литых дисков',
-      from: true,
-      paramType: 'diameter',
-      diameters: {
-        'R13': 700, 'R14': 800, 'R15': 900, 'R16': 1000,
-        'R17': 1200, 'R18': 1500, 'R19': 1700, 'R20': 2000, 'R21': 2500
-      }
-    },
-
-    // РАСКАТКА ШТАМПОВАННЫХ
-    {
-      id: 'steel-rolling',
-      group: 'steel-rolling',
-      name: 'Раскатка штампованных дисков',
-      from: false,
-      paramType: 'diameter',
-      diameters: { 'R14': 500, 'R15': 500, 'R16': 500 }
-    },
-
-    // ПРОЧИЕ ШИНОМОНТАЖНЫЕ УСЛУГИ
-    { id: 'sensor',   group: 'tyre-other', name: 'Установка датчика давления', from: false, paramType: 'none', price: 150 },
-    { id: 'inflate',  group: 'tyre-other', name: 'Подкачка колеса',            from: false, paramType: 'none', price: 100 }
-  ];
-
-  // ---------- ДАННЫЕ ПО ШИНОМОНТАЖУ (вариант А) ----------
-  const tyreRows = {
-    light: {
-      'R13-14': { remove: 100, demount: 50, mount: 50, balance: 200, lowProfileExtra: 0 },
-      'R15':    { remove: 100, demount: 75, mount: 75, balance: 220, lowProfileExtra: 0 },
-      'R16':    { remove: 100, demount: 75, mount: 75, balance: 250, lowProfileExtra: 0 },
-      'R17':    { remove: 125, demount: 100, mount: 100, balance: 275, lowProfileExtra: 150 },
-      'R18':    { remove: 150, demount: 125, mount: 125, balance: 300, lowProfileExtra: 150 },
-      'R19':    { remove: 175, demount: 150, mount: 150, balance: 350, lowProfileExtra: 150 },
-      'R20-22': { remove: 200, demount: 175, mount: 175, balance: 400, lowProfileExtra: 150 }
-    },
-    suv: {
-      'Кроссоверы R14-16':    { remove: 150, demount: 125, mount: 125, balance: 250 },
-      'Кроссоверы R17-18':    { remove: 200, demount: 150, mount: 150, balance: 300 },
-      'Кроссоверы R19-20':    { remove: 250, demount: 175, mount: 175, balance: 350 },
-      'Кроссоверы R21':       { remove: 250, demount: 200, mount: 200, balance: 450 },
-      'Джипы R15-20':         { remove: 250, demount: 200, mount: 200, balance: 350 },
-      'Джипы R21 и выше':     { remove: 250, demount: 200, mount: 200, balance: 450 },
-      'Газель / транзит и т.д.': { remove: 150, demount: 125, mount: 125, balance: 250 }
     }
   };
 
-  // ---------- ЭЛЕМЕНТЫ DOM ----------
-  const discGroupSelect    = document.getElementById('discGroupSelect');
-  const discServiceSelect  = document.getElementById('discServiceSelect');
-  const discDiameterField  = document.getElementById('discDiameterField');
-  const discDiameterSelect = document.getElementById('discDiameterSelect');
-  const discQuantityInput  = document.getElementById('discQuantityInput');
-  const discError          = document.getElementById('discError');
-  const discAddBtn         = document.getElementById('discAddBtn');
+  const paintDirectionSelect = document.getElementById('paintDirection');
+  const paintServiceSelect   = document.getElementById('paintService');
+  const paintDiameterField   = document.getElementById('paintDiameterField');
+  const paintDiameterSelect  = document.getElementById('paintDiameter');
+  const paintQtyInput        = document.getElementById('paintQty');
+  const paintError           = document.getElementById('paintError');
+  const paintAddBtn          = document.getElementById('paintAddBtn');
 
-  const tyreTypeSelect   = document.getElementById('tyreTypeSelect');
-  const tyreRowSelect    = document.getElementById('tyreRowSelect');
-  const tyreQuantityInput= document.getElementById('tyreQuantityInput');
-  const tyreLowProfile   = document.getElementById('tyreLowProfile');
-  const lowProfileWrapper= document.getElementById('lowProfileWrapper');
-  const tyreError        = document.getElementById('tyreError');
-  const tyreAddBtn       = document.getElementById('tyreAddBtn');
+  // ---------- ДАННЫЕ ШИНОМОНТАЖА ----------
+  // вариант А — полный цикл: снятие + демонтаж / монтаж + балансировка (+ доплата за профиль <45)
+  const tyreRows = {
+    light: {
+      'R13-14': { remove: 100, demount: 50,  mount: 50,  balance: 200, lowExtra: 0   },
+      'R15':    { remove: 100, demount: 75,  mount: 75,  balance: 220, lowExtra: 0   },
+      'R16':    { remove: 100, demount: 75,  mount: 75,  balance: 250, lowExtra: 0   },
+      'R17':    { remove: 125, demount: 100, mount: 100, balance: 275, lowExtra: 150 },
+      'R18':    { remove: 150, demount: 125, mount: 125, balance: 300, lowExtra: 150 },
+      'R19':    { remove: 175, demount: 150, mount: 150, balance: 350, lowExtra: 150 },
+      'R20-22': { remove: 200, demount: 175, mount: 175, balance: 400, lowExtra: 150 }
+    },
+    suv: {
+      'Кроссоверы R14-16':      { remove: 150, demount: 125, mount: 125, balance: 250 },
+      'Кроссоверы R17-18':      { remove: 200, demount: 150, mount: 150, balance: 300 },
+      'Кроссоверы R19-20':      { remove: 250, demount: 175, mount: 175, balance: 350 },
+      'Кроссоверы R21':         { remove: 250, demount: 200, mount: 200, balance: 450 },
+      'Джипы R15-20':           { remove: 250, demount: 200, mount: 200, balance: 350 },
+      'Джипы R21 и выше':       { remove: 250, demount: 200, mount: 200, balance: 450 },
+      'Газель / транзит и т. д.': { remove: 150, demount: 125, mount: 125, balance: 250 }
+    }
+  };
 
+  // ремонт шин и прочие услуги — из второго прайса
+  const tyreGenericData = {
+    repair: {
+      name: 'Ремонт покрышек',
+      mode: 'simple',
+      services: {
+        'Установка жгута':                 { price: 300, from: false },
+        'Установка заплатки / грибка':     { price: 450, from: true  },
+        'Установка кордовой заплатки':     { price: 600, from: true  },
+        'Ремонт боковых порезов':          { price: 800, from: true  }, // до 3000
+        'Ремонт камеры':                   { price: 300, from: false },
+        'Зачистка диска':                  { price: 50,  from: false },
+        'Промазать диск герметиком':      { price: 100, from: false },
+        'Пакет':                           { price: 25,  from: false },
+        'Вентиль простой':                 { price: 75,  from: false },
+        'Вентиль крем':                    { price: 75,  from: false }
+      }
+    },
+    straight: {
+      name: 'Правка литых дисков',
+      mode: 'byDiameter',
+      services: {
+        'Правка литых дисков': {
+          from: true,
+          diameters: {
+            'R13': 700, 'R14': 800, 'R15': 900, 'R16': 1000,
+            'R17': 1200, 'R18': 1500, 'R19': 1700, 'R20': 2000, 'R21': 2500
+          }
+        }
+      }
+    },
+    rolling: {
+      name: 'Раскатка штампованных дисков',
+      mode: 'byDiameter',
+      services: {
+        'Раскатка штампованных дисков': {
+          from: false,
+          diameters: { 'R14': 500, 'R15': 500, 'R16': 500 }
+        }
+      }
+    },
+    misc: {
+      name: 'Прочие услуги шиномонтажа',
+      mode: 'simple',
+      services: {
+        'Установка датчика давления': { price: 150, from: false },
+        'Подкачка колеса':            { price: 100, from: false }
+      }
+    }
+  };
+
+  const tyreDirectionSelect = document.getElementById('tyreDirection');
+  const tyreComplexBlock    = document.getElementById('tyreComplexBlock');
+  const tyreGenericBlock    = document.getElementById('tyreGenericBlock');
+
+  const tyreTypeSelect      = document.getElementById('tyreType');
+  const tyreRowSelect       = document.getElementById('tyreRow');
+  const tyreQtyComplexInput = document.getElementById('tyreQtyComplex');
+  const tyreLowProfile      = document.getElementById('tyreLowProfile');
+  const tyreLowProfileRow   = document.getElementById('tyreLowProfileRow');
+
+  const tyreServiceSelect   = document.getElementById('tyreService');
+  const tyreDiameterField   = document.getElementById('tyreDiameterField');
+  const tyreDiameterSelect  = document.getElementById('tyreDiameter');
+  const tyreQtyGenericInput = document.getElementById('tyreQtyGeneric');
+
+  const tyreError           = document.getElementById('tyreError');
+  const tyreAddBtn          = document.getElementById('tyreAddBtn');
+
+  // ---------- СМЕТА ----------
   const summaryBody   = document.getElementById('summaryBody');
   const summaryEmpty  = document.getElementById('summaryEmpty');
   const positionsTag  = document.getElementById('positionsTag');
   const summaryTotal  = document.getElementById('summaryTotal');
   const summaryClearBtn = document.getElementById('summaryClearBtn');
 
-  // ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ----------
+  let items = []; // { category, name, param, quantity, unitPrice, sum, from }
+
   function formatPrice(value, isFrom) {
     if (value == null || isNaN(value)) return '—';
     const formatted = value.toLocaleString('ru-RU');
@@ -649,9 +697,6 @@ document.addEventListener('DOMContentLoaded', function () {
       el.style.display = 'none';
     }
   }
-
-  // ---------- СМЕТА ----------
-  let items = []; // { category, name, param, quantity, unitPrice, sum, from }
 
   function updatePositionsTag() {
     positionsTag.textContent = items.length + ' позиций';
@@ -724,197 +769,350 @@ document.addEventListener('DOMContentLoaded', function () {
     recalcSummary();
   }
 
-  // ---------- ИНИЦИАЛИЗАЦИЯ ФОРМЫ ДИСКОВ ----------
-  function populateDiscGroups() {
-    discGroupSelect.innerHTML = '';
-    discGroups.forEach(g => {
+  // ---------- ЛОГИКА СТУДИИ ПОКРАСКИ ----------
+  function initPaintDirections() {
+    paintDirectionSelect.innerHTML = '';
+    Object.keys(paintData).forEach(key => {
+      const dir = paintData[key];
       const opt = document.createElement('option');
-      opt.value = g.id;
-      opt.textContent = g.name;
-      discGroupSelect.appendChild(opt);
+      opt.value = key;
+      opt.textContent = dir.name;
+      paintDirectionSelect.appendChild(opt);
     });
   }
 
-  function populateDiscServices() {
-    const groupId = discGroupSelect.value;
-    const filtered = discServices.filter(s => s.group === groupId);
-    discServiceSelect.innerHTML = '';
-    filtered.forEach((s, idx) => {
+  function updatePaintServices() {
+    const dirKey = paintDirectionSelect.value;
+    const dir = paintData[dirKey];
+    if (!dir) return;
+
+    paintServiceSelect.innerHTML = '';
+    const serviceNames = Object.keys(dir.services);
+    serviceNames.forEach((name, index) => {
       const opt = document.createElement('option');
-      opt.value = s.id;
-      opt.textContent = s.name;
-      discServiceSelect.appendChild(opt);
-      if (idx === 0) opt.selected = true;
+      opt.value = name;
+      opt.textContent = name;
+      if (index === 0) opt.selected = true;
+      paintServiceSelect.appendChild(opt);
     });
-    updateDiscDiameterVisibility();
-    setError(discError, null);
+
+    if (dir.mode === 'byDiameter') {
+      paintServiceSelect.disabled = serviceNames.length === 1;
+    } else {
+      paintServiceSelect.disabled = false;
+    }
+
+    updatePaintDiameters();
+    setError(paintError, null);
   }
 
-  function updateDiscDiameterVisibility() {
-    const service = discServices.find(s => s.id === discServiceSelect.value);
-    if (!service) return;
-    if (service.paramType === 'diameter') {
-      discDiameterField.style.display = 'flex';
-      const prev = discDiameterSelect.value;
-      discDiameterSelect.innerHTML = '';
-      const keys = Object.keys(service.diameters);
-      keys.forEach(d => {
+  function updatePaintDiameters() {
+    const dirKey = paintDirectionSelect.value;
+    const dir = paintData[dirKey];
+    if (!dir) return;
+
+    const serviceName = paintServiceSelect.value;
+    const service = dir.services[serviceName];
+
+    if (dir.mode === 'byDiameter' && service) {
+      paintDiameterField.style.display = 'flex';
+      const prevVal = paintDiameterSelect.value;
+      paintDiameterSelect.innerHTML = '';
+      const diamMap = service;
+      Object.keys(diamMap).forEach((d, index) => {
         const opt = document.createElement('option');
         opt.value = d;
         opt.textContent = d;
-        discDiameterSelect.appendChild(opt);
+        if (index === 0) opt.selected = true;
+        paintDiameterSelect.appendChild(opt);
       });
-      if (prev && service.diameters[prev] !== undefined) {
-        discDiameterSelect.value = prev;
-      } else {
-        discDiameterSelect.value = keys[0];
+      if (prevVal && diamMap[prevVal] != null) {
+        paintDiameterSelect.value = prevVal;
       }
     } else {
-      discDiameterField.style.display = 'none';
-      discDiameterSelect.innerHTML = '';
+      paintDiameterField.style.display = 'none';
+      paintDiameterSelect.innerHTML = '';
     }
   }
 
-  function addDiscItem() {
-    setError(discError, null);
-    const groupId = discGroupSelect.value;
-    const service = discServices.find(s => s.id === discServiceSelect.value);
-    if (!service) {
-      setError(discError, 'Выберите услугу.');
+  function addPaintItem() {
+    setError(paintError, null);
+    const dirKey = paintDirectionSelect.value;
+    const dir = paintData[dirKey];
+    if (!dir) {
+      setError(paintError, 'Выберите направление.');
       return;
     }
-    const quantity = Number(discQuantityInput.value || '0');
+    const serviceName = paintServiceSelect.value;
+    const quantity = Number(paintQtyInput.value || '0');
     if (!Number.isFinite(quantity) || quantity <= 0) {
-      setError(discError, 'Количество должно быть больше 0.');
+      setError(paintError, 'Количество должно быть больше 0.');
       return;
     }
 
     let unitPrice = null;
-    let param = null;
+    let param = '';
+    let from = false;
 
-    if (service.paramType === 'diameter') {
-      param = discDiameterSelect.value;
-      unitPrice = service.diameters[param];
-      if (unitPrice == null) {
-        setError(discError, 'Для выбранного диаметра цена не указана.');
+    if (dir.mode === 'byDiameter') {
+      const service = dir.services[serviceName];
+      const diameter = paintDiameterSelect.value;
+      if (!service || !diameter) {
+        setError(paintError, 'Выберите диаметр.');
         return;
       }
+      unitPrice = service[diameter];
+      if (!Number.isFinite(unitPrice)) {
+        setError(paintError, 'Для выбранного диаметра цена не указана.');
+        return;
+      }
+      param = diameter + ', комплект';
     } else {
+      const service = dir.services[serviceName];
+      if (!service) {
+        setError(paintError, 'Выберите услугу.');
+        return;
+      }
       unitPrice = service.price;
-    }
-
-    if (!Number.isFinite(unitPrice)) {
-      setError(discError, 'Не удалось определить цену.');
-      return;
+      from = !!service.from;
+      param = dir.name;
     }
 
     const sum = unitPrice * quantity;
 
     items.push({
-      category: discGroups.find(g => g.id === groupId)?.name || 'Работы с дисками и шинами',
-      name: service.name,
+      category: 'Студия покраски и реставрации дисков',
+      name: serviceName,
       param,
       quantity,
       unitPrice,
       sum,
-      from: !!service.from
+      from
     });
 
     recalcSummary();
   }
 
-  // ---------- ИНИЦИАЛИЗАЦИЯ ФОРМЫ ШИНОМОНТАЖА ----------
+  // ---------- ЛОГИКА ШИНОМОНТАЖА ----------
+  function updateTyreModeViews() {
+    const mode = tyreDirectionSelect.value;
+    if (mode === 'complex') {
+      tyreComplexBlock.style.display = '';
+      tyreGenericBlock.style.display = 'none';
+      setError(tyreError, null);
+    } else {
+      tyreComplexBlock.style.display = 'none';
+      tyreGenericBlock.style.display = '';
+      populateTyreGeneric();
+      setError(tyreError, null);
+    }
+  }
+
   function populateTyreRows() {
-    const type = tyreTypeSelect.value; // light / suv
+    const type = tyreTypeSelect.value;
     const rows = tyreRows[type];
     tyreRowSelect.innerHTML = '';
     Object.keys(rows).forEach((key, idx) => {
       const opt = document.createElement('option');
       opt.value = key;
       opt.textContent = key;
-      tyreRowSelect.appendChild(opt);
       if (idx === 0) opt.selected = true;
+      tyreRowSelect.appendChild(opt);
     });
     updateLowProfileVisibility();
-    setError(tyreError, null);
   }
 
   function updateLowProfileVisibility() {
     const type = tyreTypeSelect.value;
     if (type !== 'light') {
-      lowProfileWrapper.style.display = 'none';
+      tyreLowProfileRow.style.display = 'none';
       tyreLowProfile.checked = false;
       return;
     }
     const rowKey = tyreRowSelect.value;
     const row = tyreRows.light[rowKey];
-    if (row && row.lowProfileExtra && row.lowProfileExtra > 0) {
-      lowProfileWrapper.style.display = 'flex';
+    if (row && row.lowExtra && row.lowExtra > 0) {
+      tyreLowProfileRow.style.display = 'flex';
     } else {
-      lowProfileWrapper.style.display = 'none';
+      tyreLowProfileRow.style.display = 'none';
       tyreLowProfile.checked = false;
     }
   }
 
-  function addTyreItem() {
-    setError(tyreError, null);
-    const type = tyreTypeSelect.value;
-    const rows = tyreRows[type];
-    const rowKey = tyreRowSelect.value;
-    const row = rows[rowKey];
-    if (!row) {
-      setError(tyreError, 'Выберите диаметр / тип.');
-      return;
-    }
-    const quantity = Number(tyreQuantityInput.value || '0');
-    if (!Number.isFinite(quantity) || quantity <= 0) {
-      setError(tyreError, 'Количество колёс должно быть больше 0.');
-      return;
-    }
+  function populateTyreGeneric() {
+    const dirKey = tyreDirectionSelect.value;
+    const data = tyreGenericData[dirKey];
+    if (!data) return;
 
-    const basePerWheel = row.remove + row.demount + row.mount + row.balance;
-    let extra = 0;
-    let param = '';
+    tyreServiceSelect.innerHTML = '';
+    Object.keys(data.services).forEach((name, idx) => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      if (idx === 0) opt.selected = true;
+      tyreServiceSelect.appendChild(opt);
+    });
 
-    if (type === 'light') {
-      const enabled = tyreLowProfile.checked && row.lowProfileExtra && row.lowProfileExtra > 0;
-      extra = enabled ? row.lowProfileExtra : 0;
-      param = `Легковые, ${rowKey}${enabled ? ', профиль <45' : ''}`;
+    if (data.mode === 'byDiameter') {
+      tyreDiameterField.style.display = 'flex';
+      updateTyreDiameters();
     } else {
-      param = `Внедорожники / кроссоверы, ${rowKey}`;
+      tyreDiameterField.style.display = 'none';
+      tyreDiameterSelect.innerHTML = '';
+    }
+  }
+
+  function updateTyreDiameters() {
+    const dirKey = tyreDirectionSelect.value;
+    const data = tyreGenericData[dirKey];
+    if (!data || data.mode !== 'byDiameter') return;
+
+    const serviceName = tyreServiceSelect.value;
+    const service = data.services[serviceName];
+    if (!service || !service.diameters) return;
+
+    tyreDiameterSelect.innerHTML = '';
+    Object.keys(service.diameters).forEach((d, idx) => {
+      const opt = document.createElement('option');
+      opt.value = d;
+      opt.textContent = d;
+      if (idx === 0) opt.selected = true;
+      tyreDiameterSelect.appendChild(opt);
+    });
+  }
+
+  function addTyreItem() {
+    const mode = tyreDirectionSelect.value;
+    setError(tyreError, null);
+
+    if (mode === 'complex') {
+      const type = tyreTypeSelect.value;
+      const rows = tyreRows[type];
+      const rowKey = tyreRowSelect.value;
+      const row = rows[rowKey];
+      if (!row) {
+        setError(tyreError, 'Выберите диаметр / тип.');
+        return;
+      }
+      const qty = Number(tyreQtyComplexInput.value || '0');
+      if (!Number.isFinite(qty) || qty <= 0) {
+        setError(tyreError, 'Количество колёс должно быть больше 0.');
+        return;
+      }
+
+      const basePerWheel = row.remove + row.demount + row.mount + row.balance;
+      let extra = 0;
+      let param = '';
+
+      if (type === 'light') {
+        const enabled = tyreLowProfile.checked && row.lowExtra && row.lowExtra > 0;
+        extra = enabled ? row.lowExtra : 0;
+        param = 'Легковые · ' + rowKey + (enabled ? ', профиль <45' : '');
+      } else {
+        param = 'Внедорожники / кроссоверы · ' + rowKey;
+      }
+
+      const unitPrice = basePerWheel + extra;
+      const sum = unitPrice * qty;
+
+      items.push({
+        category: 'Бережный шиномонтаж (полный цикл)',
+        name: 'Снятие/установка + демонтаж/монтаж + балансировка',
+        param,
+        quantity: qty,
+        unitPrice,
+        sum,
+        from: false
+      });
+
+      recalcSummary();
+      return;
     }
 
-    const unitPrice = basePerWheel + extra;
-    const sum = unitPrice * quantity;
+    // Ремонт покрышек / правка / раскатка / прочие услуги
+    const dirKey = tyreDirectionSelect.value;
+    const data = tyreGenericData[dirKey];
+    if (!data) {
+      setError(tyreError, 'Выберите направление.');
+      return;
+    }
+
+    const serviceName = tyreServiceSelect.value;
+    const service = data.services[serviceName];
+    if (!service) {
+      setError(tyreError, 'Выберите услугу.');
+      return;
+    }
+
+    let unitPrice = null;
+    let param = '';
+    let from = !!service.from;
+    const qtyInput = tyreQtyGenericInput;
+    const qty = Number(qtyInput.value || '0');
+    if (!Number.isFinite(qty) || qty <= 0) {
+      setError(tyreError, 'Количество должно быть больше 0.');
+      return;
+    }
+
+    if (data.mode === 'byDiameter') {
+      const diameter = tyreDiameterSelect.value;
+      if (!diameter) {
+        setError(tyreError, 'Выберите диаметр.');
+        return;
+      }
+      unitPrice = service.diameters[diameter];
+      if (!Number.isFinite(unitPrice)) {
+        setError(tyreError, 'Для выбранного диаметра цена не указана.');
+        return;
+      }
+      param = diameter;
+    } else {
+      unitPrice = service.price;
+      param = data.name;
+    }
+
+    const sum = unitPrice * qty;
 
     items.push({
-      category: 'Бережный шиномонтаж (полный цикл)',
-      name: 'Снятие/установка + демонтаж/монтаж + балансировка',
+      category: 'Бережный шиномонтаж · ремонт шин и дисков',
+      name: serviceName,
       param,
-      quantity,
+      quantity: qty,
       unitPrice,
       sum,
-      from: false
+      from
     });
 
     recalcSummary();
   }
 
-  // ---------- ПРИВЯЗКА ОБРАБОТЧИКОВ ----------
-  discGroupSelect.addEventListener('change', populateDiscServices);
-  discServiceSelect.addEventListener('change', updateDiscDiameterVisibility);
-  discAddBtn.addEventListener('click', addDiscItem);
+  // ---------- ИНИЦИАЛИЗАЦИЯ ----------
+  initPaintDirections();
+  updatePaintServices();
 
-  tyreTypeSelect.addEventListener('change', () => { populateTyreRows(); });
-  tyreRowSelect.addEventListener('change', updateLowProfileVisibility);
+  tyreTypeSelect.addEventListener('change', () => {
+    populateTyreRows();
+  });
+
+  tyreRowSelect.addEventListener('change', () => {
+    updateLowProfileVisibility();
+  });
+
+  populateTyreRows();
+  updateTyreModeViews();
+
+  // события
+  paintDirectionSelect.addEventListener('change', updatePaintServices);
+  paintServiceSelect.addEventListener('change', updatePaintDiameters);
+  paintAddBtn.addEventListener('click', addPaintItem);
+
+  tyreDirectionSelect.addEventListener('change', updateTyreModeViews);
+  tyreServiceSelect.addEventListener('change', updateTyreDiameters);
   tyreAddBtn.addEventListener('click', addTyreItem);
 
   summaryClearBtn.addEventListener('click', clearSummary);
 
-  // ---------- СТАРТ ----------
-  populateDiscGroups();
-  populateDiscServices();
-  populateTyreRows();
+  // первая отрисовка
   recalcSummary();
 });
 </script>
